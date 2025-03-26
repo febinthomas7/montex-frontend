@@ -3,8 +3,7 @@ import ReactDOM from "react-dom/client";
 import { RouterProvider } from "react-router-dom";
 import router from "./routes";
 import Context from "./Context";
-import FallBack from "./component/Fallback";
-
+import FallBack from "./component/FallBack";
 import "./index.css";
 
 // const queryClient = new QueryClient();
