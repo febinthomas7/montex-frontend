@@ -35,7 +35,7 @@ const navItems = [
 
 const BottomNav = () => {
   return (
-    <section className="fixed bottom-0 left-0 z-20 w-full bg-white   shadow-sm sm:hidden  drop-shadow-lg">
+    <section className="fixed bottom-0 left-0 z-20 w-full bg-[#d4d4d4]  shadow-sm sm:hidden  drop-shadow-lg">
       <nav className="flex justify-around p-4">
         {navItems.map((e, index) => {
           return (
