@@ -1,6 +1,8 @@
 import { createBrowserRouter } from "react-router-dom";
 import { lazy, useState, useEffect, useContext } from "react";
 import CheckoutPage from "../pages/CheckoutPage";
+const Settings = lazy(() => import("../pages/Settings"));
+
 const Home = lazy(() => import("../pages/home"));
 const Products = lazy(() => import("../pages/Products"));
 const PageNotFound = lazy(() => import("../component/PageNotFound"));
@@ -25,6 +27,10 @@ const router = createBrowserRouter([
   {
     path: "/checkout",
     element: <CheckoutPage />,
+  },
+  {
+    path: "/settings",
+    element: <Settings />,
   },
   {
     path: "/reels",

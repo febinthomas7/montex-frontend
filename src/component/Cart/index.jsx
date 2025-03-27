@@ -10,7 +10,7 @@ const products = [
     href: "#",
     color: "Salmon",
     price: "$90.00",
-    quantity: 1,
+    quantity: 2,
     imageSrc:
       "https://tailwindcss.com/plus-assets/img/ecommerce-images/shopping-cart-page-04-product-01.jpg",
     imageAlt:
@@ -33,24 +33,38 @@ const products = [
 
 const Cart = () => {
   const { cartOpen, setCartOpen } = useContext(Store);
+  const [updatedCart, setUpdatedCart] = useState(products);
+  const Remove = (item) => {
+    const updatedProducts = updatedCart.filter(
+      (product) => product.id !== item.id
+    );
+    setUpdatedCart(updatedProducts);
+  };
+  const subtotal = updatedCart.reduce((total, product) => {
+    const price = parseFloat(product.price.replace("$", ""));
+    return total + price * product.quantity;
+  }, 0);
 
   return (
     <>
-      <BsCart4
-        className="  text-gray-700 h-5 w-5 mr-4 cursor-pointer"
+      <div
+        className="flex justify-center items-center gap-1  cursor-pointer"
         onClick={() => setCartOpen(!cartOpen)}
-      />
+      >
+        <BsCart4 className="  text-gray-700 h-5 w-5 " />
+        <span>{updatedCart?.length}</span>
+      </div>
 
       {cartOpen && (
         <>
           {/* Backdrop */}
           <div
-            className="fixed  z-40 bg-gray-500/75 transition-opacity duration-500 ease-in-out"
+            className="fixed  z-40 left-0  top-0 h-svh  w-full bg-[#010305bf] transition-opacity duration-500 ease-in-out"
             onClick={() => setCartOpen(!cartOpen)}
           />
 
           {/* Slide-in Panel */}
-          <div className="fixed top-0 h-svh right-0 z-50 flex max-w-full pl-10">
+          <div className="fixed top-0 bottom-0  h-[calc(100vh-60px)] sm:h-svh right-0 z-50 flex max-w-full pl-10">
             <div className="w-screen max-w-md transform transition duration-500 ease-in-out translate-x-0 bg-white shadow-xl">
               <div className="flex h-full flex-col overflow-y-auto">
                 <div className="flex-1 overflow-y-auto px-4 py-6 sm:px-6">
@@ -61,7 +75,7 @@ const Cart = () => {
                     <div className="ml-3 flex h-7 items-center">
                       <button
                         type="button"
-                        onClick={() => setCartOpen(false)}
+                        onClick={() => setCartOpen(!cartOpen)}
                         className="relative -m-2 p-2 text-gray-400 hover:text-gray-500"
                       >
                         <span className="sr-only">Close panel</span>
@@ -89,7 +103,7 @@ const Cart = () => {
                         role="list"
                         className="-my-6 divide-y divide-gray-200"
                       >
-                        {products.map((product) => (
+                        {updatedCart?.map((product) => (
                           <li key={product.id} className="flex py-6">
                             <div className="size-24 shrink-0 overflow-hidden rounded-md border border-gray-200">
                               <img
@@ -119,6 +133,7 @@ const Cart = () => {
                                 <div className="flex">
                                   <button
                                     type="button"
+                                    onClick={() => Remove(product)}
                                     className="font-medium text-indigo-600 hover:text-indigo-500"
                                   >
                                     Remove
@@ -136,7 +151,7 @@ const Cart = () => {
                 <div className="border-t border-gray-200 px-4 py-6 sm:px-6">
                   <div className="flex justify-between text-base font-medium text-gray-900">
                     <p>Subtotal</p>
-                    <p>$262.00</p>
+                    <p>${subtotal}</p>
                   </div>
                   <p className="mt-0.5 text-sm text-gray-500">
                     Shipping and taxes calculated at checkout.

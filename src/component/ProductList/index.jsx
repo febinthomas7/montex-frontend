@@ -1,27 +1,41 @@
 import React, { useEffect, useState } from "react";
 import Card from "../Card";
 import RelatedProducts from "../RelatedProducts";
+import category from "../../category.json";
 
 const ProductList = () => {
   const [products, setProducts] = useState([]);
   const [totalProducts, setTotalProducts] = useState(0);
   const [currentPage, setCurrentPage] = useState(1);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [debouncedSearch, setDebouncedSearch] = useState("");
 
   const productsPerPage = 8;
+  useEffect(() => {
+    const handler = setTimeout(() => {
+      setDebouncedSearch(searchTerm);
+      setCurrentPage(1); // Reset to page 1 on new search
+    }, 500); // debounce delay: 500ms
 
+    return () => clearTimeout(handler);
+  }, [searchTerm]);
   useEffect(() => {
     const fetchData = async () => {
       const skip = (currentPage - 1) * productsPerPage;
-      const res = await fetch(
-        `https://dummyjson.com/products?limit=${productsPerPage}&skip=${skip}`
-      );
+
+      const baseUrl = searchTerm
+        ? `https://dummyjson.com/products/search?q=${debouncedSearch}&limit=${productsPerPage}&skip=${skip}`
+        : `https://dummyjson.com/products?limit=${productsPerPage}&skip=${skip}`;
+
+      const res = await fetch(baseUrl);
       const data = await res.json();
+
       setProducts(data.products);
       setTotalProducts(data.total);
     };
 
     fetchData();
-  }, [currentPage]);
+  }, [currentPage, debouncedSearch]);
 
   const totalPages = Math.ceil(totalProducts / productsPerPage);
 
@@ -31,7 +45,7 @@ const ProductList = () => {
         <h2 className="sr-only">Products</h2>
 
         <div className="p-4 bg-white shadow-md rounded-md mb-6">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {/* Category Filter */}
             <div>
               <label className="block text-sm font-semibold">Category</label>
@@ -41,55 +55,27 @@ const ProductList = () => {
                 className="w-full border rounded px-3 py-2"
               >
                 <option value="">All</option>
-                {/* {categories.map((cat, i) => (
+                {category.map((cat, i) => (
                   <option key={i} value={cat}>
                     {cat}
                   </option>
-                ))} */}
+                ))}
               </select>
             </div>
 
-            {/* Brand Filter */}
+            {/* Search Bar */}
             <div>
-              <label className="block text-sm font-semibold">Brand</label>
-              <select
-                // value={selectedBrand}
-                // onChange={(e) => setSelectedBrand(e.target.value)}
+              <label className="block text-sm font-semibold">Search</label>
+              <input
+                type="search"
+                value={searchTerm}
+                onChange={(e) => {
+                  setSearchTerm(e.target.value);
+                  setCurrentPage(1); // 👈 reset to page 1 on new search
+                }}
                 className="w-full border rounded px-3 py-2"
-              >
-                <option value="">All</option>
-                {/* {brands.map((brand, i) => (
-                  <option key={i} value={brand}>
-                    {brand}
-                  </option>
-                ))} */}
-              </select>
-            </div>
-
-            {/* Price Range Filter */}
-            <div>
-              <label className="block text-sm font-semibold">Price Range</label>
-              <div className="flex items-center gap-2">
-                <input
-                  type="number"
-                  // value={priceRange[0]}
-                  // onChange={(e) =>
-                  //   setPriceRange([parseInt(e.target.value), priceRange[1]])
-                  // }
-                  className="w-1/2 border rounded px-2 py-1"
-                  placeholder="Min"
-                />
-                <span>-</span>
-                <input
-                  type="number"
-                  // value={priceRange[1]}
-                  // onChange={(e) =>
-                  //   // setPriceRange([priceRange[0], parseInt(e.target.value)])
-                  // }
-                  className="w-1/2 border rounded px-2 py-1"
-                  placeholder="Max"
-                />
-              </div>
+                placeholder="Search products..."
+              />
             </div>
           </div>
         </div>

@@ -4,6 +4,7 @@ import { AiOutlineProduct } from "react-icons/ai";
 import { FaRegUser } from "react-icons/fa";
 import { IoSettingsOutline } from "react-icons/io5";
 import { MdMovieFilter } from "react-icons/md";
+import { Link, useLocation } from "react-router-dom";
 
 const navItems = [
   {
@@ -19,39 +20,43 @@ const navItems = [
   {
     href: "/reels",
     icon: <MdMovieFilter className="w-6 h-6" />,
-    label: "reels",
+    label: "Reels",
   },
   {
-    href: "#",
-    icon: <FaRegUser className="w-6 h-6" />,
-    label: "Profile",
+    href: "/settings",
+    icon: <IoSettingsOutline className="w-6 h-6" />,
+    label: "Settings",
   },
-  // {
-  //   href: "#",
-  //   icon: <IoSettingsOutline className="w-6 h-6" />,
-  //   label: "Settings",
-  // },
 ];
 
 const BottomNav = () => {
+  const location = useLocation();
+
   return (
-    <section className="fixed bottom-0 left-0 z-20 w-full bg-[#d4d4d4]  shadow-sm sm:hidden  drop-shadow-lg">
+    <section className="fixed bottom-0 left-0 z-20 w-full bg-white shadow-sm sm:hidden drop-shadow-lg">
       <nav className="flex justify-around p-4">
-        {navItems.map((e, index) => {
+        {navItems.map((item, index) => {
+          const isActive = location.pathname === item.href;
+
           return (
-            <a
-              href={e.href}
+            <Link
+              to={item.href}
               key={index}
-              className="flex flex-col gap-2 items-center text-gray-500 hover:text-[#4f46e5] "
+              className={`flex flex-col gap-2 items-center ${
+                isActive ? "text-indigo-600 font-semibold" : "text-gray-500"
+              }`}
             >
-              <div className="relative flex justify-center items-center ">
-                <span className="-top-8 p-2 absolute hover:outline outline-1 hover:outline-2 outline-offset-2 rounded-full bg-white drop-shadow-lg">
-                  {e.icon}{" "}
+              <div className="relative flex justify-center items-center">
+                <span
+                  className={`-top-8 p-2 absolute rounded-full bg-white drop-shadow-lg ${
+                    isActive ? "outline outline-2 outline-indigo-600" : ""
+                  }`}
+                >
+                  {item.icon}
                 </span>
               </div>
-
-              <span className="text-xs mt-1">{e.label}</span>
-            </a>
+              <span className="text-xs mt-1">{item.label}</span>
+            </Link>
           );
         })}
       </nav>
