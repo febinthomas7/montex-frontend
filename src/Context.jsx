@@ -6,13 +6,33 @@ const Context = ({ children }) => {
   const [cartOpen, setCartOpen] = useState(false);
   const [isViewingStory, setIsViewingStory] = useState(false);
   const [activeTab, setActiveTab] = useState("profile");
+  const [isloggedin, setIsLoggedIn] = useState(
+    localStorage.getItem("token") ? true : false
+  );
+
+  const cart = JSON.parse(localStorage.getItem("cart")) || [];
+  const [updatedCart, setUpdatedCart] = useState(cart);
+  const Remove = (item) => {
+    const updatedProducts = updatedCart.filter(
+      (product) => product.id !== item.id
+    );
+
+    localStorage.setItem("cart", JSON.stringify(updatedProducts));
+    setUpdatedCart(updatedProducts);
+  };
+  const subtotal = updatedCart.reduce((total, product) => {
+    const price = parseFloat(product.price);
+    return total + price * product.quantity;
+  }, 0);
   const [user, setUser] = useState({
-    name: "Febin Thomas",
-    email: "Feb@gmail.com",
-    phone: "+1 (555) 123-4567",
-    address: "123 Main St, Anytown, CA 94321",
-    joinDate: "January 2023",
-    avatar: "",
+    name: localStorage.getItem("name"),
+    email: localStorage.getItem("email"),
+    phone: localStorage.getItem("phone"),
+    address: localStorage.getItem("address"),
+    joinDate: localStorage.getItem("date"),
+    avatar: localStorage.getItem("avatar"),
+    preview: "",
+    userId: localStorage.getItem("userId"),
   });
 
   return (
@@ -28,6 +48,12 @@ const Context = ({ children }) => {
         setActiveTab,
         user,
         setUser,
+        updatedCart,
+        setUpdatedCart,
+        Remove,
+        subtotal,
+        isloggedin,
+        setIsLoggedIn,
       }}
     >
       {children}

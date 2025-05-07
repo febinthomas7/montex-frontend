@@ -23,10 +23,8 @@ const navItems = [
   },
 ];
 const Header = () => {
-  const { scrolled, setScrolled } = useContext(Store);
-
   const location = useLocation();
-
+  const { user, setUser, scrolled, setScrolled } = useContext(Store);
   useEffect(() => {
     const handleScroll = () => {
       setScrolled(window.scrollY > 10); // Change value to your preference
@@ -36,9 +34,22 @@ const Header = () => {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
+  useEffect(() => {
+    setUser({
+      name: localStorage.getItem("name"),
+      email: localStorage.getItem("email"),
+      phone: localStorage.getItem("phone"),
+      address: localStorage.getItem("address"),
+      joinDate: localStorage.getItem("joinDate"),
+      avatar: localStorage.getItem("avatar"),
+      preview: "",
+      userId: localStorage.getItem("userId"),
+    });
+  }, []);
+
   return (
     <header
-      className={`fixed w-full flex top-0 right-0 transition-colors duration-300 ease-in-out z-20 ${
+      className={`fixed w-full flex top-0 right-0 transition-colors duration-300 ease-in-out z-30 ${
         scrolled ? "backdrop-blur-sm bg-[#fffefe] shadow-md" : ""
       }  justify-between items-center rounded-b-xl`}
     >
@@ -47,13 +58,13 @@ const Header = () => {
         className="flex justify-between items-center w-full  p-6 lg:px-8"
       >
         <div className=" ">
-          <a href="/" className=" ">
+          <Link to="/" className=" ">
             {/* <span className="sr-only">Your Company</span> */}
             <img alt="" src="/logo1.png" className="h-8 w-auto" />
-          </a>
+          </Link>
         </div>
 
-        <div className="hidden lg:flex lg:gap-x-12">
+        <div className="hidden md:flex md:gap-x-12">
           {navItems.map((item, index) => {
             const isActive = location.pathname === item.href;
 
@@ -72,7 +83,18 @@ const Header = () => {
             );
           })}
         </div>
-        <Cart />
+        <div className="flex  gap-4">
+          <Cart />
+          <div className="relative h-10 w-10 rounded-full border-2 border-white shadow-lg overflow-hidden">
+            <Link to="/settings">
+              <img
+                src={user.avatar || "../user.png"}
+                alt={user.name}
+                className="object-cover h-full w-full"
+              />
+            </Link>
+          </div>
+        </div>
       </nav>
     </header>
   );

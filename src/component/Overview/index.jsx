@@ -2,10 +2,12 @@ import { useEffect, useState } from "react";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import RelatedProducts from "../RelatedProducts";
 import BottomNav from "../BottomNav";
-
+import { useContext } from "react";
+import { Store } from "../../Context";
 const Overview = () => {
   const { id } = useParams(); // Gets the product ID from the route
   const [productDetails, setProductDetails] = useState(null);
+  const { setUpdatedCart, updatedCart } = useContext(Store);
   const [mainImage, setMainImage] = useState("");
   const [quantity, setQuantity] = useState(1);
 
@@ -101,19 +103,50 @@ const Overview = () => {
     );
   }
 
-  const handleAddToCart = () => {
+  // const handleAddToCart = () => {
+  //   const cart = JSON.parse(localStorage.getItem("cart")) || [];
+
+  //   const existingIndex = cart.findIndex(
+  //     (item) => item.id === productDetails.id
+  //   );
+
+  //   if (existingIndex !== -1) {
+  //     // Update quantity if product already exists
+  //     cart[existingIndex].quantity += quantity;
+  //     productToAdd = cart[existingIndex];
+  //   } else {
+  //     // Add new product
+  //     const productToAdd = {
+  //       id: productDetails.id,
+  //       title: productDetails.title,
+  //       price: productDetails.price,
+  //       image: mainImage,
+  //       quantity: quantity,
+  //     };
+  //     setUpdatedCart(...updatedCart, productToAdd);
+  //     cart.push(productToAdd);
+  //   }
+
+  //   localStorage.setItem("cart", JSON.stringify(cart));
+  //   alert(`${quantity} item(s) added to cart!`);
+  // };
+
+  const handleAddToCart = async () => {
     const cart = JSON.parse(localStorage.getItem("cart")) || [];
 
     const existingIndex = cart.findIndex(
       (item) => item.id === productDetails.id
     );
 
+    let productToAdd;
+
     if (existingIndex !== -1) {
       // Update quantity if product already exists
       cart[existingIndex].quantity += quantity;
+      productToAdd = cart[existingIndex];
     } else {
       // Add new product
-      const productToAdd = {
+      productToAdd = {
         id: productDetails.id,
         title: productDetails.title,
         price: productDetails.price,
@@ -125,7 +158,27 @@ const Overview = () => {
 
     localStorage.setItem("cart", JSON.stringify(cart));
     alert(`${quantity} item(s) added to cart!`);
+
+    // 🔄 Send to backend (MongoDB)
+    try {
+      const response = await fetch("https://your-backend-url.com/api/cart", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          // Include Authorization token if needed
+        },
+        body: JSON.stringify(productToAdd),
+      });
+
+      if (!response.ok) throw new Error("Failed to save cart item to database");
+
+      const result = await response.json();
+      console.log("Saved to DB:", result);
+    } catch (error) {
+      console.error("Error saving to DB:", error.message);
+    }
   };
+
   return (
     <>
       <div className="pt-24">
