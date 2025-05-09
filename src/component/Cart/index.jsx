@@ -1,11 +1,70 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { BsCart4 } from "react-icons/bs";
 import { useContext } from "react";
 import { Store } from "../../Context";
-
+import { loadStripe } from "@stripe/stripe-js";
 const Cart = () => {
-  const { cartOpen, setCartOpen, updatedCart, Remove, subtotal } =
-    useContext(Store);
+  const {
+    cartOpen,
+    setCartOpen,
+    updatedCart,
+    setUpdatedCart,
+    Remove,
+    subtotal,
+  } = useContext(Store);
+
+  const checkout = async () => {
+    try {
+      const stripe = await loadStripe(
+        "pk_test_51RMVHx2Ngjd99VdJJWDiSupouoBT66cshMhvs7675ZGvMB1mfmp0i6hvyCLXDKrHWnSWUnD65MXdB2Kqt1srKgOb00dInKs6Jj"
+      );
+      const res = await fetch(
+        `${
+          import.meta.env.VITE_BASE_URL
+        }/auth/create-checkout-session?userId=${localStorage.getItem(
+          "userId"
+        )}`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            items: updatedCart,
+          }),
+        }
+      );
+
+      const data = await res.json();
+
+      if (data.status) {
+        setUpdatedCart([]);
+        localStorage.setItem("cart", JSON.stringify([]));
+      }
+
+      const result = stripe.redirectToCheckout({
+        sessionId: data.id,
+      });
+
+      if (result.error) {
+        console.log("Checkout error:", result.error);
+      }
+    } catch (err) {
+      console.error("Checkout error:", err);
+    }
+  };
+
+  useEffect(() => {
+    if (cartOpen) {
+      document.body.classList.add("scroll", "hide");
+    } else {
+      document.body.classList.remove("scroll", "hide");
+    }
+
+    return () => {
+      document.body.classList.remove("scroll", "hide");
+    };
+  }, [cartOpen]);
 
   return (
     <>
@@ -26,7 +85,8 @@ const Cart = () => {
       >
         {/* Slide-in Panel */}
         <div
-          className={`fixed top-0 bottom-0 max-w-md  h-100vh sm:h-svh transition-transform duration-500 ease-in-out right-0 z-50 flex ${
+          onClick={(e) => e.stopPropagation()}
+          className={`fixed top-0 bottom-0 max-w-md  h-100vh h-svh transition-transform duration-500 ease-in-out right-0 z-50 flex ${
             cartOpen ? "translate-x-0" : "translate-x-full"
           } pl-10`}
         >
@@ -81,7 +141,7 @@ const Cart = () => {
                                 <h3>
                                   <a href={product.id}>{product.title}</a>
                                 </h3>
-                                <p className="ml-4">{product.price}</p>
+                                <p className="ml-4">${product.price}</p>
                               </div>
                             </div>
                             <div className="flex flex-1 items-end justify-between text-sm">
@@ -116,12 +176,12 @@ const Cart = () => {
                   Shipping and taxes calculated at checkout.
                 </p>
                 <div className="mt-6">
-                  <a
-                    href="/checkout"
-                    className="flex items-center justify-center rounded-md border border-transparent bg-indigo-600 px-6 py-3 text-base font-medium text-white shadow-sm hover:bg-indigo-700"
+                  <button
+                    onClick={checkout}
+                    className="flex w-full items-center justify-center rounded-md border border-transparent bg-indigo-600 px-6 py-3 text-base font-medium text-white shadow-sm hover:bg-indigo-700"
                   >
                     Checkout
-                  </a>
+                  </button>
                 </div>
                 <div className="mt-6 flex justify-center text-center text-sm text-gray-500">
                   <p>

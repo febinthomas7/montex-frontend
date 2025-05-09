@@ -91,7 +91,7 @@ const SignIn = () => {
     }
   };
   return (
-    <div className=" z-10 w-full h-svh flex justify-center items-center    bg-no-repeat bg-center bg-cover bg-[url('/mainpage_bg.jpg')] aspect-video ">
+    <div className="bg-black z-10 w-full h-svh flex justify-center items-center    bg-no-repeat bg-center bg-cover bg-[url('/mainpage_bg.jpg')] aspect-video ">
       {/* <Helmet>
         <title>SignIn - Flexifyy</title>
         <meta name="description" content="user sign in page" />

@@ -1,6 +1,6 @@
 const FallBack = () => {
   return (
-    <div className="bg-black fixed top-0 w-full h-svh left-0 z-50 justify-center flex items-center">
+    <div className="bg-[#f0f8ff] fixed top-0 w-full h-svh left-0 z-50 justify-center flex items-center">
       <div className="spinner">
         <div className="r1"></div>
         <div className="r2"></div>

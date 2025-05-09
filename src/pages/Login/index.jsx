@@ -42,7 +42,18 @@ const Login = () => {
 
       const result = await response.json();
 
-      const { sucess, error, jwtToken, name, email, _id, dp } = result;
+      const {
+        sucess,
+        error,
+        jwtToken,
+        name,
+        email,
+        _id,
+        dp,
+        joinDate,
+        address,
+        phone,
+      } = result;
       if (!sucess) {
         // handleError(message);
         setIsBtn(false);
@@ -58,6 +69,9 @@ const Login = () => {
         localStorage.setItem("name", name);
         localStorage.setItem("email", email);
         localStorage.setItem("userId", _id);
+        localStorage.setItem("date", joinDate);
+        localStorage.setItem("address", address);
+        localStorage.setItem("phone", phone);
         if (localStorage.getItem("token")) {
           setIsLoggedIn(true);
         } else {
@@ -69,12 +83,12 @@ const Login = () => {
         }
         if (isloggedin) {
           setUser({
-            name: res.data?.name,
+            name: localStorage.getItem("name"),
             email: localStorage.getItem("email"),
-            phone: res.data?.phone,
-            address: res.data?.address,
-            joinDate: localStorage.getItem("date"),
-            avatar: res.data?.dp,
+            phone: localStorage.getItem("phone"),
+            address: localStorage.getItem("address"),
+            joinDate: localStorage.getItem("joinDate"),
+            avatar: localStorage.getItem("avatar"),
             preview: "",
             userId: localStorage.getItem("userId"),
           });
@@ -95,7 +109,7 @@ const Login = () => {
   };
 
   return (
-    <div className="z-10 w-full h-svh flex justify-center items-center bg-black   bg-no-repeat bg-center bg-cover bg-[url('/mainpage_bg.jpg')] aspect-video">
+    <div className=" bg-black z-10 w-full h-svh flex justify-center items-center   bg-no-repeat bg-center bg-cover bg-[url('/mainpage_bg.jpg')] aspect-video">
       {/* <Helmet>
         <title>Login - Flexifyy</title>
         <meta name="description" content="user login page" />
@@ -106,7 +120,7 @@ const Login = () => {
       ></header>
       {/* <ToastContainer /> */}
       <div className="flex justify-center items-center w-full h-full z-40  backdrop-blur-sm">
-        <div className="bg-[#ffffff] p-8 rounded-lg shadow-lg w-full  max-w-md relative mx-5 ">
+        <div className=" p-8 rounded-lg shadow-lg w-full  max-w-md relative mx-5 ">
           <Link to="/">
             <div className="logo   flex justify-center items-center">
               <img

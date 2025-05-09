@@ -157,18 +157,24 @@ const Overview = () => {
     }
 
     localStorage.setItem("cart", JSON.stringify(cart));
-    alert(`${quantity} item(s) added to cart!`);
+
+    setUpdatedCart(cart);
 
     // 🔄 Send to backend (MongoDB)
     try {
-      const response = await fetch("https://your-backend-url.com/api/cart", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          // Include Authorization token if needed
-        },
-        body: JSON.stringify(productToAdd),
-      });
+      const response = await fetch(
+        `${
+          import.meta.env.VITE_BASE_URL
+        }/auth/cart?userId=${localStorage.getItem("userId")}`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            // Include Authorization token if needed
+          },
+          body: JSON.stringify(productToAdd),
+        }
+      );
 
       if (!response.ok) throw new Error("Failed to save cart item to database");
 

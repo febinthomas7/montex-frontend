@@ -19,6 +19,8 @@ const ProfileTab = () => {
     user.preview || "../user.png"
   );
 
+  console.log(user.joinDate, user.name);
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setUser((prev) => ({ ...prev, [name]: value }));
@@ -120,9 +122,7 @@ const ProfileTab = () => {
 
                   <div>
                     <h2 className="text-2xl font-bold">{user.name}</h2>
-                    <p className="text-gray-500">
-                      Member since {user.joinDate}
-                    </p>
+                    <p className="text-gray-500">{user.email}</p>
                   </div>
                 </div>
               )}
@@ -201,19 +201,9 @@ const ProfileTab = () => {
                 </div>
               </div>
             ) : (
-              <div className="grid gap-6 md:grid-cols-2 transition-all duration-200">
+              <div className="grid gap-6 md:grid-cols-3 mt-6 transition-all duration-200">
                 <div className="space-y-4">
-                  <div className="flex items-center gap-3">
-                    <div className="bg-indigo-100 p-2 rounded-full">
-                      <FaEnvelope className="h-5 w-5 text-indigo-600" />
-                    </div>
-                    <div>
-                      <p className="text-sm text-gray-500">Email</p>
-                      <p className="font-medium">{user.email}</p>
-                    </div>
-                  </div>
-
-                  <div className="flex items-center gap-3">
+                  <div className="flex items-center justify-center gap-3">
                     <div className="bg-indigo-100 p-2 rounded-full">
                       <FaPhone className="h-5 w-5 text-indigo-600" />
                     </div>
@@ -225,7 +215,7 @@ const ProfileTab = () => {
                 </div>
 
                 <div className="space-y-4">
-                  <div className="flex items-center gap-3">
+                  <div className="flex items-center justify-center gap-3">
                     <div className="bg-indigo-100 p-2 rounded-full">
                       <FaMapMarkerAlt className="h-5 w-5 text-indigo-600" />
                     </div>
@@ -234,14 +224,25 @@ const ProfileTab = () => {
                       <p className="font-medium">{user.address}</p>
                     </div>
                   </div>
+                </div>
 
+                <div className="space-y-4">
+                  {" "}
                   <div className="flex items-center gap-3">
-                    <div className="bg-indigo-100 p-2 rounded-full">
+                    <div className="bg-indigo-100 justify-center p-2 rounded-full">
                       <FaCalendarAlt className="h-5 w-5 text-indigo-600" />
                     </div>
                     <div>
                       <p className="text-sm text-gray-500">Member Since</p>
-                      <p className="font-medium">{user.joinDate}</p>
+                      <p className="font-medium">
+                        {new Date(
+                          localStorage.getItem("date")
+                        ).toLocaleDateString("en-US", {
+                          year: "numeric",
+                          month: "long",
+                          day: "numeric",
+                        })}
+                      </p>
                     </div>
                   </div>
                 </div>

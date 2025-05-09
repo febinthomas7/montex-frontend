@@ -83,11 +83,11 @@
   70%,
   100% {
     transform: scaleY(0.4);
-    background-color: red;
+    background-color: #1882b0;
   }
 
   60% {
     transform: scaleY(1);
-    background-color: red;
+    background-color: #1882b0;
   }
 }

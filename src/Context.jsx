@@ -12,13 +12,29 @@ const Context = ({ children }) => {
 
   const cart = JSON.parse(localStorage.getItem("cart")) || [];
   const [updatedCart, setUpdatedCart] = useState(cart);
-  const Remove = (item) => {
+  const Remove = async (item) => {
     const updatedProducts = updatedCart.filter(
       (product) => product.id !== item.id
     );
 
     localStorage.setItem("cart", JSON.stringify(updatedProducts));
     setUpdatedCart(updatedProducts);
+    try {
+      const response = await fetch(
+        `${import.meta.env.VITE_BASE_URL}/auth/cart/${
+          item.id
+        }?userId=${localStorage.getItem("userId")}`,
+        {
+          method: "DELETE",
+        }
+      );
+
+      if (!response.ok) throw new Error("Failed to delete from DB");
+
+      console.log("Deleted from DB:", await response.json());
+    } catch (error) {
+      console.error("Error deleting from DB:", error.message);
+    }
   };
   const subtotal = updatedCart.reduce((total, product) => {
     const price = parseFloat(product.price);
@@ -34,6 +50,8 @@ const Context = ({ children }) => {
     preview: "",
     userId: localStorage.getItem("userId"),
   });
+
+  console.log(user.joinDate);
 
   return (
     <Store.Provider
