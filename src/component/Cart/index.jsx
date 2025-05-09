@@ -15,9 +15,7 @@ const Cart = () => {
 
   const checkout = async () => {
     try {
-      const stripe = await loadStripe(
-        "pk_test_51RMVHx2Ngjd99VdJJWDiSupouoBT66cshMhvs7675ZGvMB1mfmp0i6hvyCLXDKrHWnSWUnD65MXdB2Kqt1srKgOb00dInKs6Jj"
-      );
+      const stripe = await loadStripe(import.meta.env.VITE_STRIPE_SECRET_KEY);
       const res = await fetch(
         `${
           import.meta.env.VITE_BASE_URL
