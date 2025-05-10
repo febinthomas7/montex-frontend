@@ -1,18 +1,17 @@
 import { Link, useNavigate } from "react-router-dom";
-// import { handleError, handleSuccess } from "../../utils";
-// import { ToastContainer } from "react-toastify";
+import { handleError, handleSuccess } from "../../utils";
+import { ToastContainer } from "react-toastify";
 import { useState } from "react";
 // import { Helmet } from "react-helmet";
 import { GoEye, GoEyeClosed } from "react-icons/go";
-// import { getDeviceDetails } from "../../utils";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
-// import FallBack2 from "../../components/FallBack2";
 import { useContext } from "react";
 import { Store } from "../../Context";
 
 const Login = () => {
   const navigate = useNavigate();
-  const { isloggedin, setIsLoggedIn, setUser } = useContext(Store);
+  const { isloggedin, setIsLoggedIn, setUser, setUpdatedCart } =
+    useContext(Store);
 
   const [isBtn, setIsBtn] = useState(false);
   const [pswd, setPswd] = useState(true);
@@ -53,9 +52,11 @@ const Login = () => {
         joinDate,
         address,
         phone,
+        message,
+        cart,
       } = result;
       if (!sucess) {
-        // handleError(message);
+        handleError(message);
         setIsBtn(false);
         setLoading(false);
         setIsWait(false);
@@ -63,7 +64,7 @@ const Login = () => {
       if (sucess) {
         setLoading(false);
         setIsWait(false);
-        // handleSuccess(message);
+        handleSuccess(message);
 
         localStorage.setItem("token", jwtToken);
         localStorage.setItem("name", name);
@@ -72,6 +73,11 @@ const Login = () => {
         localStorage.setItem("date", joinDate);
         localStorage.setItem("address", address);
         localStorage.setItem("phone", phone);
+
+        if (cart) {
+          localStorage.setItem("cart", JSON.stringify(cart));
+          setUpdatedCart(cart);
+        }
         if (localStorage.getItem("token")) {
           setIsLoggedIn(true);
         } else {
@@ -118,7 +124,7 @@ const Login = () => {
       <header
         className={` text-white sm:px-10 sm:py-2 z-40 flex top-0 justify-between fixed w-full  items-center duration-75 ease-in`}
       ></header>
-      {/* <ToastContainer /> */}
+      <ToastContainer />
       <div className="flex justify-center items-center w-full h-full z-40  backdrop-blur-sm">
         <div className=" p-8 rounded-lg shadow-lg w-full  max-w-md relative mx-5 ">
           <Link to="/">

@@ -3,6 +3,8 @@ import { BsCart4 } from "react-icons/bs";
 import { useContext } from "react";
 import { Store } from "../../Context";
 import { loadStripe } from "@stripe/stripe-js";
+import { AiOutlineLoading3Quarters } from "react-icons/ai";
+
 const Cart = () => {
   const {
     cartOpen,
@@ -12,10 +14,14 @@ const Cart = () => {
     Remove,
     subtotal,
   } = useContext(Store);
+  const [Loading, setLoading] = useState(false);
 
   const checkout = async () => {
+    setLoading(true);
     try {
-      const stripe = await loadStripe(import.meta.env.VITE_STRIPE_SECRET_KEY);
+      const stripe = await loadStripe(
+        import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY
+      );
       const res = await fetch(
         `${
           import.meta.env.VITE_BASE_URL
@@ -29,6 +35,7 @@ const Cart = () => {
           },
           body: JSON.stringify({
             items: updatedCart,
+            total: subtotal,
           }),
         }
       );
@@ -38,6 +45,7 @@ const Cart = () => {
       if (data.status) {
         setUpdatedCart([]);
         localStorage.setItem("cart", JSON.stringify([]));
+        setLoading(false);
       }
 
       const result = stripe.redirectToCheckout({
@@ -84,7 +92,7 @@ const Cart = () => {
         {/* Slide-in Panel */}
         <div
           onClick={(e) => e.stopPropagation()}
-          className={`fixed top-0 bottom-0 max-w-md  h-100vh h-svh transition-transform duration-500 ease-in-out right-0 z-50 flex ${
+          className={`fixed top-0 bottom-0 max-w-md  h-100vh h-dvh sm:h-svh transition-transform duration-500 ease-in-out right-0 z-50 flex ${
             cartOpen ? "translate-x-0" : "translate-x-full"
           } pl-10`}
         >
@@ -178,7 +186,11 @@ const Cart = () => {
                     onClick={checkout}
                     className="flex w-full items-center justify-center rounded-md border border-transparent bg-indigo-600 px-6 py-3 text-base font-medium text-white shadow-sm hover:bg-indigo-700"
                   >
-                    Checkout
+                    {Loading ? (
+                      <AiOutlineLoading3Quarters className="animate-spin" />
+                    ) : (
+                      "Checkout"
+                    )}
                   </button>
                 </div>
                 <div className="mt-6 flex justify-center text-center text-sm text-gray-500">

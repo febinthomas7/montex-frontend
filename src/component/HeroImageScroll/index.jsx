@@ -14,7 +14,7 @@ const HeroImageScroll = ({ images, interval = 4000 }) => {
   }, [images.length, interval]);
 
   return (
-    <div className="relative w-full h-[600px] overflow-hidden mt-5">
+    <div className="relative w-full h-[400px] overflow-hidden mt-5">
       <div
         className="flex transition-transform duration-700 ease-in-out"
         style={{
@@ -25,7 +25,7 @@ const HeroImageScroll = ({ images, interval = 4000 }) => {
         {images.map((img, index) => (
           <div
             key={index}
-            className="w-full flex-shrink-0 h-[600px]"
+            className="w-full flex-shrink-0 h-[400px]"
             style={{
               backgroundImage: `url(${img})`,
               backgroundSize: "contain",

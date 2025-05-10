@@ -91,6 +91,10 @@ const Header = () => {
                 src={user.avatar || "../user.png"}
                 alt={user.name}
                 className="object-cover h-full w-full"
+                onError={(e) => {
+                  e.target.onerror = null; // prevents infinite loop if fallback also fails
+                  e.target.src = "../user.png"; // fallback image path
+                }}
               />
             </Link>
           </div>

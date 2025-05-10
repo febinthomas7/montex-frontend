@@ -4,10 +4,11 @@ import RelatedProducts from "../RelatedProducts";
 import BottomNav from "../BottomNav";
 import { useContext } from "react";
 import { Store } from "../../Context";
+import { handleError, handleSuccess } from "../../utils";
 const Overview = () => {
   const { id } = useParams(); // Gets the product ID from the route
   const [productDetails, setProductDetails] = useState(null);
-  const { setUpdatedCart, updatedCart } = useContext(Store);
+  const { setUpdatedCart, isloggedin } = useContext(Store);
   const [mainImage, setMainImage] = useState("");
   const [quantity, setQuantity] = useState(1);
 
@@ -103,35 +104,11 @@ const Overview = () => {
     );
   }
 
-  // const handleAddToCart = () => {
-  //   const cart = JSON.parse(localStorage.getItem("cart")) || [];
-
-  //   const existingIndex = cart.findIndex(
-  //     (item) => item.id === productDetails.id
-  //   );
-
-  //   if (existingIndex !== -1) {
-  //     // Update quantity if product already exists
-  //     cart[existingIndex].quantity += quantity;
-  //     productToAdd = cart[existingIndex];
-  //   } else {
-  //     // Add new product
-  //     const productToAdd = {
-  //       id: productDetails.id,
-  //       title: productDetails.title,
-  //       price: productDetails.price,
-  //       image: mainImage,
-  //       quantity: quantity,
-  //     };
-  //     setUpdatedCart(...updatedCart, productToAdd);
-  //     cart.push(productToAdd);
-  //   }
-
-  //   localStorage.setItem("cart", JSON.stringify(cart));
-  //   alert(`${quantity} item(s) added to cart!`);
-  // };
-
   const handleAddToCart = async () => {
+    if (!isloggedin) {
+      handleError("user not logged in!");
+      return;
+    }
     const cart = JSON.parse(localStorage.getItem("cart")) || [];
 
     const existingIndex = cart.findIndex(
@@ -159,6 +136,7 @@ const Overview = () => {
     localStorage.setItem("cart", JSON.stringify(cart));
 
     setUpdatedCart(cart);
+    handleSuccess("item added");
 
     // 🔄 Send to backend (MongoDB)
     try {

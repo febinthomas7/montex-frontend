@@ -4,7 +4,6 @@ import Card from "../Card";
 
 const RelatedProducts = ({ category, currentProductId }) => {
   const [related, setRelated] = useState([]);
-  console.log(category, currentProductId);
 
   useEffect(() => {
     if (category) {

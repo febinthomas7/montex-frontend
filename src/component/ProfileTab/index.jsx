@@ -1,5 +1,7 @@
 import { useState } from "react";
 import axios from "axios";
+import { handleError, handleSuccess } from "../../utils";
+import { AiOutlineLoading3Quarters } from "react-icons/ai";
 
 import {
   FaEdit,
@@ -14,12 +16,11 @@ import { Store } from "../../Context";
 const ProfileTab = () => {
   const [editMode, setEditMode] = useState(false);
   const { user, setUser, isloggedin, setIsLoggedIn } = useContext(Store);
+  const [Loading, setLoading] = useState(false);
 
   const [avatarPreview, setAvatarPreview] = useState(
     user.preview || "../user.png"
   );
-
-  console.log(user.joinDate, user.name);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -38,6 +39,7 @@ const ProfileTab = () => {
 
   const toggleEdit = () => setEditMode(!editMode);
   const saveChanges = async () => {
+    setLoading(true);
     try {
       const formData = new FormData();
       formData.append("name", user.name);
@@ -65,6 +67,8 @@ const ProfileTab = () => {
       localStorage.setItem("avatar", res.data?.dp);
       localStorage.setItem("phone", res.data?.phone);
 
+      handleSuccess("profile updated");
+
       setUser({
         name: res.data?.name,
         email: localStorage.getItem("email"),
@@ -75,9 +79,11 @@ const ProfileTab = () => {
         preview: "",
         userId: localStorage.getItem("userId"),
       });
+      setLoading(false);
 
       setEditMode(false);
     } catch (err) {
+      setLoading(false);
       console.error("Error uploading profile:", err);
       alert("Failed to save profile.");
     }
@@ -87,7 +93,30 @@ const ProfileTab = () => {
     <div className="space-y-6">
       {isloggedin && (
         <div className="bg-white rounded-lg shadow-md overflow-hidden">
-          <div className="p-6 pb-4">
+          <div className="p-6 pb-4 relative">
+            {editMode && (
+              <div
+                className="absolute right-6 top-1 cursor-pointer"
+                onClick={() => setEditMode(false)}
+              >
+                <span className="sr-only">Close panel</span>
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="size-6"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M6 18L18 6M6 6l12 12"
+                  />
+                </svg>
+              </div>
+            )}
+
             <div className="flex flex-col md:flex-row md:items-center md:justify-between">
               {editMode ? (
                 <div className="relative h-20 w-20 rounded-full border-4 border-white shadow-lg overflow-hidden">
@@ -117,6 +146,10 @@ const ProfileTab = () => {
                       src={user.avatar || "../user.png"}
                       alt={user.name}
                       className="object-cover h-full w-full"
+                      onError={(e) => {
+                        e.target.onerror = null; // prevents infinite loop if fallback also fails
+                        e.target.src = "../user.png"; // fallback image path
+                      }}
                     />
                   </div>
 
@@ -137,9 +170,16 @@ const ProfileTab = () => {
                   }`}
                 >
                   {editMode ? (
-                    <>
-                      <FaSave className="h-4 w-4" /> Save Changes
-                    </>
+                    <div className="min-w-[70px] flex gap-2 justify-center items-center">
+                      {Loading ? (
+                        <AiOutlineLoading3Quarters className="animate-spin" />
+                      ) : (
+                        <>
+                          <FaSave className="h-4 w-4" />
+                          Save Changes
+                        </>
+                      )}
+                    </div>
                   ) : (
                     <>
                       <FaEdit className="h-4 w-4" /> Edit Profile
@@ -201,9 +241,9 @@ const ProfileTab = () => {
                 </div>
               </div>
             ) : (
-              <div className="grid gap-6 md:grid-cols-3 mt-6 transition-all duration-200">
+              <div className="grid gap-6 sm:grid-cols-3 mt-6 transition-all duration-200">
                 <div className="space-y-4">
-                  <div className="flex items-center justify-center gap-3">
+                  <div className="flex items-center sm:justify-center gap-3">
                     <div className="bg-indigo-100 p-2 rounded-full">
                       <FaPhone className="h-5 w-5 text-indigo-600" />
                     </div>
@@ -215,7 +255,7 @@ const ProfileTab = () => {
                 </div>
 
                 <div className="space-y-4">
-                  <div className="flex items-center justify-center gap-3">
+                  <div className="flex items-center sm:justify-center gap-3">
                     <div className="bg-indigo-100 p-2 rounded-full">
                       <FaMapMarkerAlt className="h-5 w-5 text-indigo-600" />
                     </div>
@@ -228,8 +268,8 @@ const ProfileTab = () => {
 
                 <div className="space-y-4">
                   {" "}
-                  <div className="flex items-center gap-3">
-                    <div className="bg-indigo-100 justify-center p-2 rounded-full">
+                  <div className="flex items-center sm:justify-center gap-3">
+                    <div className="bg-indigo-100  p-2 rounded-full">
                       <FaCalendarAlt className="h-5 w-5 text-indigo-600" />
                     </div>
                     <div>

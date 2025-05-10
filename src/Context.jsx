@@ -1,5 +1,5 @@
 import { createContext, useState } from "react";
-
+import { handleError, handleSuccess } from "./utils";
 export const Store = createContext();
 const Context = ({ children }) => {
   const [scrolled, setScrolled] = useState(false);
@@ -19,6 +19,7 @@ const Context = ({ children }) => {
 
     localStorage.setItem("cart", JSON.stringify(updatedProducts));
     setUpdatedCart(updatedProducts);
+    handleSuccess("item removed");
     try {
       const response = await fetch(
         `${import.meta.env.VITE_BASE_URL}/auth/cart/${
@@ -36,6 +37,7 @@ const Context = ({ children }) => {
       console.error("Error deleting from DB:", error.message);
     }
   };
+
   const subtotal = updatedCart.reduce((total, product) => {
     const price = parseFloat(product.price);
     return total + price * product.quantity;
@@ -50,8 +52,6 @@ const Context = ({ children }) => {
     preview: "",
     userId: localStorage.getItem("userId"),
   });
-
-  console.log(user.joinDate);
 
   return (
     <Store.Provider

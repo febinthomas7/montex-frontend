@@ -1,11 +1,10 @@
 import { Link, useNavigate } from "react-router-dom";
-// import { handleError, handleSuccess } from "../../utils";
-// import { ToastContainer } from "react-toastify";
+import { handleError, handleSuccess } from "../../utils";
+import { ToastContainer } from "react-toastify";
 import { useState } from "react";
 // import { Helmet } from "react-helmet";
 import { GoEye, GoEyeClosed } from "react-icons/go";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
-// import FallBack2 from "../../components/FallBack2";
 
 const SignIn = () => {
   const navigate = useNavigate();
@@ -75,14 +74,14 @@ const SignIn = () => {
         }
         setLoading(false);
         setIsWait(false);
-        // handleSuccess(message);
+        handleSuccess(message);
 
         setTimeout(() => {
           navigate("/login");
           setIsBtn(false);
         }, 1000);
       } else if (error) {
-        // handleError(error?.details[0].message);
+        handleError(error?.details[0].message);
         setIsBtn(false);
       }
     } catch (error) {
@@ -100,7 +99,7 @@ const SignIn = () => {
       <header
         className={` text-white  sm:px-10 sm:py-2 z-40 flex top-0 justify-between fixed w-full  items-center duration-75 ease-in`}
       ></header>
-      {/* <ToastContainer /> */}
+      <ToastContainer />
       <div className="flex justify-center h-full items-center w-full z-40 backdrop-blur-sm">
         <div className="bg-[#fffff] p-8 rounded-lg shadow-lg w-full max-w-md relative mx-5 ">
           <Link to="/">
@@ -110,7 +109,6 @@ const SignIn = () => {
                 alt=""
                 className="w-[120px] sm:w-[180px] "
               />
-              {/* <FallBack2 /> */}
             </div>
           </Link>
           <form onSubmit={handleSubmit}>
