@@ -63,14 +63,14 @@ const ReelsViewer = ({ reels, activeIndex, onClose }) => {
         <button
           onClick={handleUp}
           disabled={currentIndex === 0}
-          className="bg-white text-black px-3 py-1 rounded disabled:opacity-50"
+          className="bg-white hidden sm:inline text-black px-3 py-1 rounded disabled:opacity-50"
         >
           ↑
         </button>
         <button
           onClick={handleDown}
           disabled={currentIndex === reels.length - 1}
-          className="bg-white text-black px-3 py-1 rounded disabled:opacity-50"
+          className="bg-white hidden sm:inline text-black px-3 py-1 rounded disabled:opacity-50"
         >
           ↓
         </button>

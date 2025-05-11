@@ -9,10 +9,12 @@ import FeaturedProducts from "../../component/FeaturedProduct";
 import Footer from "../../component/Footer";
 import Newsletter from "../../component/Newsletter";
 import NewArrivals from "../../component/NewArrivals";
+import { ToastContainer } from "react-toastify";
 
 const Home = () => {
   return (
     <>
+      <ToastContainer />
       <Header />
       <Hero />
       <FeaturedProducts />

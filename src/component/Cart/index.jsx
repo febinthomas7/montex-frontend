@@ -4,6 +4,7 @@ import { useContext } from "react";
 import { Store } from "../../Context";
 import { loadStripe } from "@stripe/stripe-js";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
+import { handleError, handleSuccess } from "../../utils";
 
 const Cart = () => {
   const {
@@ -13,15 +14,32 @@ const Cart = () => {
     setUpdatedCart,
     Remove,
     subtotal,
+    isloggedin,
   } = useContext(Store);
   const [Loading, setLoading] = useState(false);
 
   const checkout = async () => {
+    if (!isloggedin) {
+      handleError("User not logged in!");
+      return;
+    }
+    if (updatedCart.length === 0) {
+      handleError("Cart is empty.");
+      return;
+    }
+
     setLoading(true);
+
     try {
       const stripe = await loadStripe(
         import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY
       );
+
+      if (!stripe) {
+        console.error("Stripe failed to load.");
+        return;
+      }
+
       const res = await fetch(
         `${
           import.meta.env.VITE_BASE_URL
@@ -40,23 +58,29 @@ const Cart = () => {
         }
       );
 
+      if (!res.ok) {
+        const errorText = await res.text();
+        throw new Error(`Checkout session creation failed: ${errorText}`);
+      }
+
       const data = await res.json();
 
       if (data.status) {
         setUpdatedCart([]);
         localStorage.setItem("cart", JSON.stringify([]));
-        setLoading(false);
       }
 
-      const result = stripe.redirectToCheckout({
+      const result = await stripe.redirectToCheckout({
         sessionId: data.id,
       });
 
       if (result.error) {
-        console.log("Checkout error:", result.error);
+        console.log("Checkout error:", result.error.message);
       }
     } catch (err) {
-      console.error("Checkout error:", err);
+      console.error("Checkout error:", err.message || err);
+    } finally {
+      setLoading(false);
     }
   };
 

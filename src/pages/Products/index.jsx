@@ -1,19 +1,13 @@
-import React, { useEffect, useState } from "react";
 import ProductList from "../../component/ProductList";
 import Header from "../../component/Header";
 import Footer from "../../component/Footer";
 import BottomNav from "../../component/BottomNav";
-import Masonry from "../../component/Masonry";
+import { ToastContainer } from "react-toastify";
 
 const Products = () => {
-  const [product, setProduct] = useState([]);
-  useEffect(() => {
-    fetch("https://dummyjson.com/products?limit=10")
-      .then((res) => res.json())
-      .then((e) => setProduct(e.products));
-  }, []);
   return (
     <>
+      <ToastContainer />
       <Header />
 
       <ProductList />

@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useLocation, useNavigate, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import RelatedProducts from "../RelatedProducts";
 import BottomNav from "../BottomNav";
 import { useContext } from "react";
